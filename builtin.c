@@ -1,8 +1,8 @@
 #include "shell.h"
 
 /**
- * _myexit - exits the shell
- * @info: structure containing potential arguments.
+ * _myexit - to exit the shell
+ * @info: A structure containing potential arguments.
  * used to maintain constant function prototype.
  * Return: exits with a given exit status (0)
  * if info.argv[0] != "exit"
@@ -31,7 +31,7 @@ int _myexit(info_t *info)
 }
 
 /**
- * _mycd - changes the current directory of the process
+ * _mycd - will change the current directory of the process
  * @info: structure containing potential arguments.
  * used to maintain constant function prototype.
  * Return: Always 0
@@ -71,7 +71,8 @@ int _mycd(info_t *info)
 	if (chdir_ret == -1)
 	{
 		print_error(info, "can't cd to ");
-		_eputs(info->argv[1], _eputchar('\n');
+		_eputs(info->argv[1]);
+		_eputchar('\n');
 	}
 	else
 	{
@@ -82,7 +83,7 @@ int _mycd(info_t *info)
 }
 
 /**
- * _myhelp - changes the current directory of the process
+ * _myhelp - will change the current directory of the process
  * @info: Structure containing potential arguments.
  * Used to maintain constant function prototype.
  * Return: Always 0

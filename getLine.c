@@ -1,7 +1,7 @@
 #include "shell.h"
 
 /**
- * input_buf - buffers chained commands
+ * input_buf - to buffer chained commands
  * @info: parameter struct
  * @buf: address of buffer
  * @len: address of len var
@@ -11,7 +11,7 @@
 
 ssize_t input_buf(info_t *info, char **buf, size_t *len)
 {
-	ssize_t r = 0;
+	ssize_t c = 0;
 	size_t len_p = 0;
 
 	if (!*len) /* if nothing left int the buffer, fill it */
@@ -19,34 +19,34 @@ ssize_t input_buf(info_t *info, char **buf, size_t *len)
 		/*bfree((void **)info->cmd_buf);*/
 		free(*buf);
 		*buf = NULL;
-		signal(SIGHT, siginHandler); #if USE_GETLINE
-		r = _getline(buf, &len_p);
-	#else
-		r = _getline(info, buf, &len_p);
-	#endif
-		if (r > 0)
+		signal(SIGINT, signtHandler);
+#if USE_GETLINE
+		c = _getline(buf, &len_p);
+#else
+		c = _getline(info, buf, &len_p);
+#endif
+		if (c > 0)
 		{
-			if ((*buf)[r - 1] == '\n')
+			if ((*buf)[c - 1] == '\n')
 			{
-				(*buf)[r - 1] = '\0'; /* remove trailing newline */
-				r--;
+				(*buf)[c - 1] = '\0'; /* remove trailing newline */
+				c--;
 			}
 			info->linecount_flag = 1;
-
 			remove_comments(*buf);
 			build_history_list(info, *buf, info->histcount++);
 			/* if (_strchr(*buf, '--)) is this a command chain? */
 			{
-				*len = r;
+				*len = c;
 				info->cmd_buf = buf;
 			}
 		}
 	}
-	return (r);
+	return (c);
 }
 
 /**
- * get_input - gets a line minus the newline
+ * get_input - get a line minus the newline
  * @info: parameter struct
  *
  * Return: bytes read
@@ -55,7 +55,7 @@ ssize_t input_buf(info_t *info, char **buf, size_t *len)
 ssize_t get_input(info_t *info)
 {
 	static char *buf; /* the '-' command chain buffer */
-	static size_t i, j, len;
+	static size_t f, g, len;
 	ssize_t r = 0;
 	char **buf_p = &(info->arg), *p;
 
@@ -65,21 +65,21 @@ ssize_t get_input(info_t *info)
 		return (-1);
 	if (len) /* we have commands left in the chain buffer */
 	{
-		j = i; /* init new iterator to current buf position */
-		p = buf + i; /* get pointer for return */
+		g = f; /* init new iterator to current buf position */
+		p = buf + f; /* get pointer for return */
 
-		check_chain(info, buf, &j, i, len);
-		while (j < len) /* iterate to semicolon or end */
+		check_chain(info, buf, &g, f, len);
+		while (g < len) /* iterate to semicolon or end */
 		{
-			if (is_chain(info, buf, &j))
+			if (is_chain(info, buf, &g))
 				break;
-			j++;
+			g++;
 		}
 
-		i = j + 1; /* increment past nulled ';" */
-		if (i >= len) /* reached end of buffer? */
+		f = f + 1; /* increment past nulled ';" */
+		if (f >= len) /* reached end of buffer? */
 		{
-			i = len = 0; /* reset position and length */
+			f = len = 0; /* reset position and length */
 			info->cmd_buf_type = CMD_NORM;
 		}
 
@@ -100,22 +100,22 @@ ssize_t get_input(info_t *info)
  * Return: r
  */
 
-ssize_t read_buf(info_t *info, char *buf, size_t *i)
+ssize_t read_buf(info_t *info, char *buf, size_t *f)
 {
 	ssize_t r = 0;
 
-	if (*i)
+	if (*f)
 		return (0);
 	r = read(info->readfd, buf, READ_BUF_SIZE);
 	if (r >= 0)
-		*i = r;
+		*f = r;
 	return (r);
 }
 
 /**
- * * _getline - gets the next line of input from STDIN
+ * * _getline - will get the next line of input from STDIN
  * @info: parameter struct
- * @ptr: address of pointer to buffer, preallocated or NULL
+ * @ptr: the address of pointer to buffer, preallocated or NULL
  * @length: size of preallocated ptr buffer if not NULL
  *
  * Return: s
@@ -129,27 +129,27 @@ int _getline(info_t *info, char **ptr, size_t *length)
 	ssize_t r = 0, s = 0;
 	char *p = NULL, *new_p = NULL, *c;
 
-	p + *ptr;
+	p = *ptr;
 	if (p && length)
 		s = *length;
 	if (i == len)
 		i = len = 0;
 
-	r = read_buf(info, buf, &len);
+	r = read_buf(info, buff, &len);
 	if (r == -1 || (r == 0 && len == 0))
 		return (-1);
 
-	c = _strchr(buf + i, '\n');
-	k = c ? 1 + (unsigned int)(c - buf) : len;
+	c = _strchr(buff + i, '\n');
+	k = c ? 1 + (unsigned int)(c - buff) : len;
 	new_p = _realloc(p, s, s ? s + k : k + 1);
 
 	if (!new_p) /* MALLOC FAILURE! */
 		return (p ? free(p), -1 : -1);
 
 	if (s)
-		_strncat(new_p, buf + i, k - i);
+		_strncat(new_p, buff + i, k - i);
 	else
-		_strncpy(new_p, buf + i, k - i + 1);
+		_strncpy(new_p, buff + i, k - i + 1);
 
 	s += k - i;
 	i = k;
