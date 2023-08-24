@@ -54,7 +54,8 @@ typedef struct liststr
 /**
  * struct passinfo - contains pseudo-arguments to pass into a function,
  * allowing uniform prototype for function pointer struct
- * @arg: array of strings generated from arg
+ * @arg: a string generated from getline
+ * @argv: an array o strings generated from arg
  * @path: a string path for the current command
  * @argc: the argument count
  * @line_count: the error count
@@ -84,19 +85,20 @@ typedef struct passinfo
 	int linecount_flag;
 	char *fname;
 	list_t *env;
+	list_t *history;
 	list_t *alias;
 	char **environ;
 	int env_changed;
 	int status;
 
 
-	char **cmd_buf; /* pointer to cmd; chain buffer, memory management */
+	char **cmd_buf; /* pointer to cmd; chain buffer, for memory management */
 	int cmd_buf_type; /* CMD_type ||, &&, ; */
 	int readfd;
 	int histcount;
 } info_t;
 
-#define INFO_INIT \
+#define INFO_INIT\
 {NULL, NULL, NULL, 0, 0, 0, 0, NULL, NULL, NULL, NULL, NULL, 0, 0, NULL, \
 	0, 0, 0}
 
