@@ -42,7 +42,7 @@ int _unsetenv(info_t *info, char *var)
 		{
 			info->env_changed = delete_node_at_index(&(info->env), f);
 			f = 0;
-			node = info-> env;
+			node = info->env;
 			continue;
 		}
 		node = node->next;
@@ -67,7 +67,7 @@ int _setenv(info_t *info, char *var, char *value)
 	list_t *node;
 	char *p;
 
-	if(!var || !value)
+	if (!var || !value)
 		return (0);
 
 	buf = malloc(_strlen(var) + _strlen(value) + 2);

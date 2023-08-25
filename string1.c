@@ -11,15 +11,15 @@ char _strcpy(char *dest, char *src)
 {
 	int f = 0;
 
-	if (dest == src || src == 0)
-		return (dest);
+	if (*dest == src || src == 0)
+		return dest;
 	while (src[f])
 	{
 		dest[f] = src[f];
 		f++;
 	}
 	dest[f] = 0;
-	return (dest);
+	return dest;
 }
 
 /**

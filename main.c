@@ -16,7 +16,7 @@ int main(int ac, char **av)
 	asm ("mov %1, %0\n\t"
 			"add $3, %0"
 			: "r" (fd)
-			: "r" (fd));
+			: "=r" (fd));
 
 	if (ac == 2)
 	{
@@ -27,7 +27,7 @@ int main(int ac, char **av)
 			{
 				_eputs(av[0]);
 				_eputs(": 0: cant open");
-				_eputs(av[i]);
+				_eputs(av[1]);
 				_eputchar('\n');
 				_eputchar(BUF_FLUSH);
 				exit(127);

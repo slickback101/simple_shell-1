@@ -29,7 +29,7 @@ int _eputchar(char c)
 	static int e;
 	static char buf[WRITE_BUF_SIZE];
 
-	if (c ==BUF_FLUSH || e >= WRITE_BUF_SIZE)
+	if (c == BUF_FLUSH || e >= WRITE_BUF_SIZE)
 	{
 		write(2, buf, e);
 		e = 0;
@@ -54,7 +54,7 @@ int _putfd(char c, int fd)
 	if (c == BUF_FLUSH || e >= WRITE_BUF_SIZE)
 	{
 		write(fd, buf, e);
-		e; 0;
+		e = 0;
 	}
 	if (c != BUF_FLUSH)
 		buf[e++] = c;
